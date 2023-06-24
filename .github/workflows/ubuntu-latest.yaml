@@ -8,10 +8,10 @@ on:
     paths:
       - "ubuntu-latest/Dockerfile"
 env:
-  IMAGE_PATH: containers.tenzin.io/docker/tenzin-io/actions-runner/ubuntu-latest:${{ github.ref_name }}
+  IMAGE_PATH: containers.tenzin.io/docker/tenzin-io/actions-runner-images/ubuntu-latest:${{ github.ref_name }}
 
 jobs:
-  build:
+  docker-build:
     defaults:
       run:
         working-directory: ./ubuntu-latest
