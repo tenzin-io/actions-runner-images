@@ -1,0 +1,51 @@
+name: nvidia-latest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
+    paths:
+      - "nvidia-latest/Dockerfile"
+      - "nvidia-latest/requirements.txt"
+env:
+  IMAGE_PATH: containers.tenzin.io/docker/tenzin-io/actions-runner-images/nvidia-latest:${{ github.ref_name }}
+
+jobs:
+  docker-build:
+    defaults:
+      run:
+        working-directory: ./nvidia-latest
+
+    runs-on: [self-hosted, homelab, v1]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: hashicorp/vault-action@v2
+        id: vault_secrets
+        with:
+          url: https://vault.tenzin.io
+          role: ${{ vars.VAULT_ROLE_TO_ASSUME }}
+          method: jwt
+          exportToken: true
+          secrets: |
+            github/data/artifactory/tenzin-bot api_token | ARTIFACTORY_API_TOKEN ;
+
+      - name: Log into registry
+        uses: docker/login-action@v2
+        with:
+          registry: containers.tenzin.io
+          username: tenzin-bot
+          password: ${{ steps.vault_secrets.outputs.ARTIFACTORY_API_TOKEN }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        run: |-
+          docker build . -t ${{ env.IMAGE_PATH }}
+          docker push ${{ env.IMAGE_PATH }}
