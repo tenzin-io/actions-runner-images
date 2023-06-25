@@ -2,6 +2,9 @@ FROM ghcr.io/actions/actions-runner-controller/actions-runner-dind:ubuntu-22.04
 
 USER runner
 
+# safe_sleep.sh fix for 100% cpu utilization
+COPY --chown=runner:docker safe_sleep.sh /runnertmp/safe_sleep.sh
+
 # install system packages
 RUN sudo apt-get update && \
     sudo apt-get install -y curl python3 python3-pip tesseract-ocr && \
