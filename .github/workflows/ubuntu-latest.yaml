@@ -34,7 +34,7 @@ jobs:
           method: jwt
           exportToken: true
           secrets: |
-            github/data/artifactory/tenzin-bot api_token | ARTIFACTORY_API_TOKEN ;
+            secrets/data/artifactory/tenzin-bot api_token | ARTIFACTORY_API_TOKEN ;
 
       - name: Log into registry
         uses: docker/login-action@v2
