@@ -1,4 +1,4 @@
-FROM summerwind/actions-runner-dind:v2.306.0-ubuntu-22.04
+FROM summerwind/actions-runner-dind:v2.307.1-ubuntu-22.04
 
 USER runner
 
