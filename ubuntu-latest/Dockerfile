@@ -2,7 +2,7 @@ FROM summerwind/actions-runner-dind:v2.306.0-ubuntu-22.04
 
 USER runner
 RUN sudo apt-get update && \
-    sudo apt-get install -y openssh-client python3-pip gpg lsb-release wget
+    sudo apt-get install -y openssh-client python3-pip gpg lsb-release wget unzip
 
 # Install Ansible
 RUN pip install --upgrade pip && \
@@ -11,10 +11,10 @@ RUN pip install --upgrade pip && \
     ansible --version
 
 # Install Hashicorp's Vault
-RUN wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list && \
-    sudo apt-get update && \
-    sudo apt-get install -y vault && \
+RUN wget  https://releases.hashicorp.com/vault/1.14.1/vault_1.14.1_linux_amd64.zip  && \
+    unzip vault_1.14.1_linux_amd64.zip && \
+    sudo mv vault /usr/bin/vault && \
+    sudo chmod +x /usr/bin/vault && \
     vault version
 
 RUN sudo apt-get autoclean
