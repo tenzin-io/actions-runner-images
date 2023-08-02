@@ -11,8 +11,10 @@ RUN pip install --upgrade pip && \
     ansible --version
 
 # Install Hashicorp's Vault
-RUN curl -s -L -o vault.zip https://releases.hashicorp.com/vault/1.14.1/vault_1.14.1_linux_amd64.zip
-RUN unzip vault.zip
+RUN sudo curl -s -L -o /tmp/vault.zip https://releases.hashicorp.com/vault/1.14.1/vault_1.14.1_linux_amd64.zip && \
+    sudo unzip /tmp/vault.zip && \
+    sudo mv /tmp/vault /usr/bin/vault && \
+    sudo vault version
 
 RUN sudo apt-get autoclean
 
