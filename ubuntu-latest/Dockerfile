@@ -12,9 +12,10 @@ RUN pip install --upgrade pip && \
 
 # Install Hashicorp's Vault
 RUN sudo curl -s -L -o /tmp/vault.zip https://releases.hashicorp.com/vault/1.14.1/vault_1.14.1_linux_amd64.zip && \
-    sudo unzip /tmp/vault.zip && \
+    unzip /tmp/vault.zip -d /tmp && \
+    chmod +x /tmp/vault && \
     sudo mv /tmp/vault /usr/bin/vault && \
-    sudo vault version
+    vault version
 
 RUN sudo apt-get autoclean
 
