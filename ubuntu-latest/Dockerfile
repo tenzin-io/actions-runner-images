@@ -9,7 +9,9 @@ RUN sudo apt-get update && \
 # Install Ansible
 RUN pip install --upgrade pip && \
     pip install --upgrade ansible && \
+    pip install --upgrade hvac && \
     ansible-galaxy collection install --timeout 180 community.general && \
+    ansible-galaxy collection install --timeout 180 community.hashi_vault && \
     ansible --version
 
 # Install Hashicorp's Vault
