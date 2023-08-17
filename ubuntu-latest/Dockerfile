@@ -1,4 +1,4 @@
-FROM summerwind/actions-runner-dind:v2.307.1-ubuntu-22.04
+FROM summerwind/actions-runner-dind:v2.308.0-ubuntu-22.04
 
 ARG VAULT_VERSION=1.14.1
 
