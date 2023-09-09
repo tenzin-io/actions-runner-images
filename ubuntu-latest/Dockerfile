@@ -1,15 +1,14 @@
 FROM summerwind/actions-runner-dind:v2.308.0-ubuntu-22.04
 
-ARG VAULT_VERSION=1.14.1
+ARG VAULT_VERSION=1.14.2
 
 USER runner
 RUN sudo apt-get update && \
-    sudo apt-get install -y openssh-client python3-pip gpg lsb-release curl unzip
+    sudo apt-get install -y openssh-client python3-pip gpg lsb-release curl unzip python3-hvac
 
 # Install Ansible
 RUN pip install --upgrade pip && \
     pip install --upgrade ansible && \
-    pip install --upgrade hvac && \
     ansible-galaxy collection install --timeout 180 community.general && \
     ansible-galaxy collection install --timeout 180 community.hashi_vault && \
     ansible --version
