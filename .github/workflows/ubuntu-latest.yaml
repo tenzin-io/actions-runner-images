@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: ./ubuntu-latest
 
-    runs-on: [self-hosted, homelab, v1]
+    runs-on: [self-hosted, homelab]
     permissions:
       contents: read
       packages: write
