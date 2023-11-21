@@ -2,13 +2,14 @@ name: ubuntu-latest
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
-    paths:
-      - "ubuntu-latest/Dockerfile"
+    inputs:
+      image_tag:
+        type: string
+        required: true
+        default: latest
+
 env:
-  IMAGE_PATH: containers.tenzin.io/docker/tenzin-io/actions-runner-images/ubuntu-latest:${{ github.ref_name }}
+  image_repository: public.ecr.aws/tenzin-io/actions-runner-images/ubuntu-latest
 
 jobs:
   docker-build:
@@ -16,7 +17,7 @@ jobs:
       run:
         working-directory: ./ubuntu-latest
 
-    runs-on: [self-hosted, homelab]
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -26,25 +27,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: hashicorp/vault-action@v2
-        id: vault_secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          url: https://vault.tenzin.io
-          role: ${{ vars.VAULT_ROLE_TO_ASSUME }}
-          method: jwt
-          exportToken: true
-          secrets: |
-            secrets/data/artifactory/tenzin-bot api_token | ARTIFACTORY_API_TOKEN ;
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
 
-      - name: Log into registry
-        uses: docker/login-action@v2
-        with:
-          registry: containers.tenzin.io
-          username: tenzin-bot
-          password: ${{ steps.vault_secrets.outputs.ARTIFACTORY_API_TOKEN }}
+      - name: Registry login
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
       - name: Build and push Docker image
         id: build-and-push
         run: |-
-          docker build . -t ${{ env.IMAGE_PATH }}
-          docker push ${{ env.IMAGE_PATH }}
+          docker build . -t ${{ env.image_repository }}:${{ inputs.image_tag }}
+          docker push ${{ env.image_repository }}:${{ inputs.image_tag }}
